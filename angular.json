@@ -24,7 +24,9 @@
               "src/assets"
             ],
             "styles": [
-              "src/styles.css"
+              "src/styles.css",
+              "node_modules/bootstrap/dist/css/bootstrap.min.css"
+
             ],
             "scripts": []
           },
@@ -119,6 +121,10 @@
           }
         }
       }
-    }},
-  "defaultProject": "ingresoEgresoApp"
+    }
+  },
+  "defaultProject": "ingresoEgresoApp",
+  "cli": {
+    "analytics": "1c2a9a60-ca5f-4ba0-a141-3bc5a2546c20"
+  }
 }
