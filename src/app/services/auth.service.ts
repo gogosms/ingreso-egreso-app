@@ -1,23 +1,43 @@
-import { Injectable } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { map } from 'rxjs/operators';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { Usuario } from '../modelos/usuario.model';
+import { Store } from '@ngrx/store';
+import { AppState } from '../app.reducer';
+import * as AuthActions from '../auth/auth.actions';
 
 
 @Injectable({
   providedIn: 'root'
 })
-export class AuthService {
+export class AuthService implements OnDestroy {
+
+  userSuscription: Subscription;
 
   constructor(private auth: AngularFireAuth,
-              public firestore: AngularFirestore) { }
+              private firestore: AngularFirestore,
+              private store: Store<AppState>) { }
+
+  ngOnDestroy(): void {
+    throw new Error('Method not implemented.');
+  }
 
   public initAuthListener() {
 
     this.auth.authState.subscribe(fireUser => {
-      console.log(fireUser);
+      if (fireUser) {
+        this.userSuscription = this.firestore.doc(`${fireUser.uid}/usuario`).valueChanges()
+          .subscribe((firestoreUser: any) => {
+            const user = Usuario.fromFireBase(firestoreUser);
+            this.store.dispatch(AuthActions.setUser({ user }));
+          });
+      } else {
+        this.userSuscription.unsubscribe();
+        this.store.dispatch(AuthActions.unSetUser());
+      }
+
     });
 
   }
@@ -27,7 +47,7 @@ export class AuthService {
       .then(({ user }) => {
         const newUser = new Usuario(user.uid, nombre, user.email);
         return this.firestore.doc(`${user.uid}/usuario`)
-          .set({...newUser});
+          .set({ ...newUser });
       });
 
   }
