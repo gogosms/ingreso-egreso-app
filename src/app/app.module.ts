@@ -28,6 +28,11 @@ import { SidebarComponent } from './shared/sidebar/sidebar.component';
 
 // app reducers
 import {appReducers} from './app.reducer';
+import { OrdenIngresoPipe } from './pipes/orden-ingreso.pipe';
+
+
+// Charts JS
+import { ChartsModule } from 'ng2-charts';
 
 
 @NgModule({
@@ -41,13 +46,15 @@ import {appReducers} from './app.reducer';
     DetalleComponent,
     FooterComponent,
     NavbarComponent,
-    SidebarComponent
+    SidebarComponent,
+    OrdenIngresoPipe
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     ReactiveFormsModule,
     FormsModule,
+    ChartsModule,
     AngularFireModule.initializeApp(environment.firebase),
     AngularFirestoreModule,
     AngularFireAuthModule,

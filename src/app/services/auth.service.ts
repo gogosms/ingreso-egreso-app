@@ -7,6 +7,7 @@ import { Usuario } from '../modelos/usuario.model';
 import { Store } from '@ngrx/store';
 import { AppState } from '../app.reducer';
 import * as AuthActions from '../auth/auth.actions';
+import * as IngresoEgresoActions from '../ingreso-egreso/ingreso-egreso.actions';
 
 
 @Injectable({
@@ -15,6 +16,11 @@ import * as AuthActions from '../auth/auth.actions';
 export class AuthService implements OnDestroy {
 
   userSuscription: Subscription;
+  private _user: Usuario;
+
+  get user() {
+    return this._user;
+  }
 
   constructor(private auth: AngularFireAuth,
               private firestore: AngularFirestore,
@@ -31,11 +37,14 @@ export class AuthService implements OnDestroy {
         this.userSuscription = this.firestore.doc(`${fireUser.uid}/usuario`).valueChanges()
           .subscribe((firestoreUser: any) => {
             const user = Usuario.fromFireBase(firestoreUser);
+            this._user = user;
             this.store.dispatch(AuthActions.setUser({ user }));
           });
       } else {
+        this._user = null;
         this.userSuscription.unsubscribe();
         this.store.dispatch(AuthActions.unSetUser());
+        this.store.dispatch(IngresoEgresoActions.unSetItems());
       }
 
     });
