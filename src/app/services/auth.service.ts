@@ -42,7 +42,7 @@ export class AuthService implements OnDestroy {
           });
       } else {
         this._user = null;
-        this.userSuscription.unsubscribe();
+        this.userSuscription?.unsubscribe();
         this.store.dispatch(AuthActions.unSetUser());
         this.store.dispatch(IngresoEgresoActions.unSetItems());
       }
